@@ -84,15 +84,14 @@ export default function AudioDataMap() {
   }, []);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">Audio Data Map</h1>
+    <>
       <div
         ref={mapRef}
         className="map-container mb-4"
         style={{ height: "500px" }}
       />
       {activeAudio && (
-        <Card>
+        <Card className="mx-4">
           <CardHeader>
             <CardTitle>{activeAudio.audio_file}</CardTitle>
           </CardHeader>
@@ -117,6 +116,6 @@ export default function AudioDataMap() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </>
   );
 }

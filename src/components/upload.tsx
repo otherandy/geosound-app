@@ -75,10 +75,9 @@ export default function AudioUploadForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"
+      className="space-y-6 max-w-md p-6 bg-white rounded-lg shadow-md min-w-80"
     >
       <h2 className="text-2xl font-bold mb-6">Upload Audio File</h2>
-
       <div>
         <Label htmlFor="audio-file">Audio File</Label>
         <Input
@@ -89,7 +88,6 @@ export default function AudioUploadForm() {
           className="mt-1"
         />
       </div>
-
       <div>
         <Label htmlFor="latitude">Latitude</Label>
         <Input
@@ -102,7 +100,6 @@ export default function AudioUploadForm() {
           className="mt-1"
         />
       </div>
-
       <div>
         <Label htmlFor="longitude">Longitude</Label>
         <Input
@@ -115,7 +112,6 @@ export default function AudioUploadForm() {
           className="mt-1"
         />
       </div>
-
       <div>
         <Label htmlFor="tags">Tags</Label>
         <Textarea
@@ -126,7 +122,6 @@ export default function AudioUploadForm() {
           className="mt-1"
         />
       </div>
-
       <Button type="submit" className="w-full" disabled={isUploading}>
         {isUploading ? "Uploading..." : "Upload Audio"}
       </Button>

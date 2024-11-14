@@ -62,8 +62,7 @@ export default function AudioDataTable() {
   );
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">Audio Data Table</h1>
+    <>
       <Input
         type="text"
         placeholder="Search..."
@@ -109,6 +108,6 @@ export default function AudioDataTable() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </>
   );
 }

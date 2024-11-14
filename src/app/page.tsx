@@ -1,9 +1,11 @@
-import AudioDataMap from "@/components/data-map";
+import AudioDataGlobe from "@/components/data-globe";
+import AudioUploadForm from "@/components/upload";
 
 export default function Home() {
   return (
-    <main>
-      <AudioDataMap />
+    <main className="mt-8 mx-auto flex items-center flex-col gap-8">
+      <AudioDataGlobe />
+      <AudioUploadForm />
     </main>
   );
 }
