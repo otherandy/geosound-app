@@ -6,49 +6,11 @@ import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AudioData } from "@/lib/types";
 
-// Sample data (same as before)
-const audioData = [
-  {
-    id: 1,
-    audio_file: "bird_chirping.mp3",
-    latitude: 40.7128,
-    longitude: -74.006,
-    tags: ["nature", "bird", "morning"],
-  },
-  {
-    id: 2,
-    audio_file: "city_traffic.mp3",
-    latitude: 34.0522,
-    longitude: -118.2437,
-    tags: ["urban", "noise", "cars"],
-  },
-  {
-    id: 3,
-    audio_file: "ocean_waves.mp3",
-    latitude: 21.3069,
-    longitude: -157.8583,
-    tags: ["nature", "ocean", "relaxing"],
-  },
-  {
-    id: 4,
-    audio_file: "rainforest_ambience.mp3",
-    latitude: -3.4653,
-    longitude: -62.2159,
-    tags: ["nature", "rainforest", "ambient"],
-  },
-  {
-    id: 5,
-    audio_file: "crowd_cheering.mp3",
-    latitude: 51.5074,
-    longitude: -0.1278,
-    tags: ["event", "crowd", "excitement"],
-  },
-];
-
-export default function AudioDataMap() {
+export default function AudioDataMap({ data }: { data: AudioData[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [activeAudio, setActiveAudio] = useState<(typeof audioData)[number]>();
+  const [activeAudio, setActiveAudio] = useState<AudioData>();
 
   useEffect(() => {
     L.Icon.Default.mergeOptions({
@@ -71,9 +33,9 @@ export default function AudioDataMap() {
     }).addTo(map);
 
     // Add markers for each audio file location
-    audioData.forEach((audio) => {
+    data.forEach((audio) => {
       const marker = L.marker([audio.latitude, audio.longitude]).addTo(map);
-      marker.bindPopup(`<b>${audio.audio_file}</b>`);
+      marker.bindPopup(`<b>${audio.file}</b>`);
       marker.on("click", () => setActiveAudio(audio));
     });
 
@@ -81,7 +43,7 @@ export default function AudioDataMap() {
     return () => {
       map.remove();
     };
-  }, []);
+  }, [data]);
 
   return (
     <>
@@ -93,7 +55,7 @@ export default function AudioDataMap() {
       {activeAudio && (
         <Card className="mx-4">
           <CardHeader>
-            <CardTitle>{activeAudio.audio_file}</CardTitle>
+            <CardTitle>{activeAudio.file}</CardTitle>
           </CardHeader>
           <CardContent>
             <p>Latitude: {activeAudio.latitude.toFixed(4)}</p>
@@ -109,7 +71,7 @@ export default function AudioDataMap() {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => alert(`Playing ${activeAudio.audio_file}`)}
+              onClick={() => alert(`Playing ${activeAudio.file}`)}
             >
               Play Audio
             </Button>
