@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { AudioData } from "@/lib/types";
+import type { AudioData } from "@/lib/types";
 
 export default function AudioDataTable({ data }: { data: AudioData[] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,6 +38,7 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
             <TableHead>Audio File</TableHead>
             <TableHead>Latitude</TableHead>
             <TableHead>Longitude</TableHead>
+            <TableHead>Loudness</TableHead>
             <TableHead>Tags</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -45,9 +46,10 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
         <TableBody>
           {filteredData.map((item) => (
             <TableRow key={item.id}>
-              <TableCell>{item.file}</TableCell>
-              <TableCell>{item.latitude.toFixed(4)}</TableCell>
-              <TableCell>{item.longitude.toFixed(4)}</TableCell>
+              <TableCell>{item.filename}</TableCell>
+              <TableCell>{item.latitude.toFixed(6)}</TableCell>
+              <TableCell>{item.longitude.toFixed(6)}</TableCell>
+              <TableCell>{item.loudness}</TableCell>
               <TableCell>
                 {item.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="mr-1">
