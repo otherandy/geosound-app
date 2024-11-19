@@ -41,6 +41,14 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
     };
   }, [data]);
 
+  const playAudio = async (id: string) => {
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
+    );
+    const audio = new Audio(res.url);
+    audio.play();
+  };
+
   return (
     <>
       <div
@@ -68,7 +76,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => alert(`Playing ${activeAudio.filename}`)}
+              onClick={() => playAudio(activeAudio.id)}
             >
               Play Audio
             </Button>
