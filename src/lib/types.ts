@@ -1,5 +1,5 @@
 export interface AudioData {
-  id: number;
+  id: string;
   file: string;
   filename: string;
   latitude: number;

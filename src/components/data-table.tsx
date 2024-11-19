@@ -49,7 +49,7 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
               <TableCell>{item.filename}</TableCell>
               <TableCell>{item.latitude.toFixed(6)}</TableCell>
               <TableCell>{item.longitude.toFixed(6)}</TableCell>
-              <TableCell>{item.loudness}</TableCell>
+              <TableCell>{item.loudness.toFixed(2)}</TableCell>
               <TableCell>
                 {item.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="mr-1">

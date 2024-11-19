@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AudioData } from "@/lib/types";
+import type { AudioData } from "@/lib/types";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export default function AudioDataMap({ data }: { data: AudioData[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -22,9 +22,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
         "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
     });
 
-    // Initialize map
     if (!mapRef.current) return;
-
     const map = L.map(mapRef.current).setView([20, 0], 2);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -32,14 +30,12 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
-    // Add markers for each audio file location
     data.forEach((audio) => {
       const marker = L.marker([audio.latitude, audio.longitude]).addTo(map);
-      marker.bindPopup(`<b>${audio.file}</b>`);
+      marker.bindPopup(`<b>${audio.filename}</b>`);
       marker.on("click", () => setActiveAudio(audio));
     });
 
-    // Clean up on unmount
     return () => {
       map.remove();
     };
@@ -55,11 +51,12 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
       {activeAudio && (
         <Card className="mx-4">
           <CardHeader>
-            <CardTitle>{activeAudio.file}</CardTitle>
+            <CardTitle>{activeAudio.filename}</CardTitle>
           </CardHeader>
           <CardContent>
             <p>Latitude: {activeAudio.latitude.toFixed(4)}</p>
             <p>Longitude: {activeAudio.longitude.toFixed(4)}</p>
+            <p>Loudness: {activeAudio.loudness.toFixed(2)}</p>
             <div className="mt-2">
               {activeAudio.tags.map((tag) => (
                 <Badge key={tag} variant="secondary" className="mr-1">
@@ -71,7 +68,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => alert(`Playing ${activeAudio.file}`)}
+              onClick={() => alert(`Playing ${activeAudio.filename}`)}
             >
               Play Audio
             </Button>
