@@ -1,20 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { FormMap } from "@/components/maps";
 
 export default function AudioUploadForm() {
-  const mapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<[number, number]>([31.86, -116.6]);
-  const [zoom, setZoom] = useState(12);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,36 +77,6 @@ export default function AudioUploadForm() {
     }
   };
 
-  useEffect(() => {
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png",
-      iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
-    });
-
-    if (!mapRef.current) return;
-    const map = L.map(mapRef.current).setView(position, zoom);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      noWrap: true,
-    }).addTo(map);
-
-    L.marker(position).addTo(map);
-    map.on("click", (e) => {
-      setPosition([e.latlng.lat, e.latlng.lng]);
-      setZoom(map.getZoom());
-    });
-
-    return () => {
-      map.remove();
-    };
-  });
-
   return (
     <form
       onSubmit={handleSubmit}
@@ -126,11 +93,7 @@ export default function AudioUploadForm() {
           className="mt-1"
         />
       </div>
-      <div
-        ref={mapRef}
-        className="map-container mb-4"
-        style={{ height: "300px" }}
-      />
+      <FormMap position={position} setPosition={setPosition} />
       <div>
         <Label htmlFor="latitude">Latitude</Label>
         <Input

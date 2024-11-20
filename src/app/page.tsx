@@ -1,4 +1,4 @@
-import AudioDataGlobe from "@/components/data-globe";
+import AudioDataGlobe from "@/components/globe";
 import AudioUploadForm from "@/components/upload";
 
 export default async function Home() {
