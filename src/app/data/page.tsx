@@ -1,5 +1,6 @@
-import AudioDataTable from "@/components/data-table";
+import { NavBar } from "@/components/navbar";
 import { DataMap } from "@/components/maps";
+import AudioDataTable from "@/components/data-table";
 
 export default async function DataPage({
   searchParams,
@@ -26,18 +27,21 @@ export default async function DataPage({
   const audioData = await response.json();
 
   return (
-    <main>
-      <DataMap
-        data={audioData}
-        circle={{
-          latitude: parseFloat(latitude as string),
-          longitude: parseFloat(longitude as string),
-          radius: parseFloat(radius as string),
-        }}
-      />
-      <div className="container mx-auto py-8 px-2">
-        <AudioDataTable data={audioData} />
-      </div>
-    </main>
+    <>
+      <NavBar />
+      <main>
+        <DataMap
+          data={audioData}
+          circle={{
+            latitude: parseFloat(latitude as string),
+            longitude: parseFloat(longitude as string),
+            radius: parseFloat(radius as string),
+          }}
+        />
+        <div className="container mx-auto py-8 px-2">
+          <AudioDataTable data={audioData} />
+        </div>
+      </main>
+    </>
   );
 }
