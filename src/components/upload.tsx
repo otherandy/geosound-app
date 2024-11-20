@@ -109,7 +109,7 @@ export default function AudioUploadForm() {
         <Input
           id="file"
           type="file"
-          accept="audio/*"
+          accept="audio/wav"
           required
           className="mt-1"
         />
