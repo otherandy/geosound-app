@@ -48,7 +48,7 @@ export default function AudioDataMap({
       marker.on("popupclose", () => setActiveAudio(undefined));
     });
 
-    if (circle) {
+    if (circle?.latitude && circle?.longitude && circle?.radius) {
       L.circle([circle.latitude, circle.longitude], {
         radius: circle.radius,
       }).addTo(map);
