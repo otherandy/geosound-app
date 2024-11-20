@@ -6,9 +6,11 @@ export default async function Home() {
   const audioData = await response.json();
 
   return (
-    <main className="mb-8 mx-auto flex items-center flex-col gap-8">
+    <main className="my-8 mx-auto flex items-center justify-center gap-8 flex-col xl:flex-row-reverse">
       <AudioDataGlobe data={audioData} />
-      <AudioUploadForm />
+      <div className="flex flex-col items-center gap-4">
+        <AudioUploadForm />
+      </div>
     </main>
   );
 }

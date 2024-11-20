@@ -14,7 +14,7 @@ import Link from "next/link";
 export default function AudioUploadForm() {
   const mapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<[number, number]>([31.86, -116.6]);
-const [zoom, setZoom] = useState(12);
+  const [zoom, setZoom] = useState(12);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,7 +101,7 @@ const [zoom, setZoom] = useState(12);
     L.marker(position).addTo(map);
     map.on("click", (e) => {
       setPosition([e.latlng.lat, e.latlng.lng]);
-setZoom(map.getZoom());
+      setZoom(map.getZoom());
     });
 
     return () => {
@@ -114,7 +114,7 @@ setZoom(map.getZoom());
       onSubmit={handleSubmit}
       className="space-y-6 max-w-md p-6 bg-white rounded-lg shadow-md min-w-96"
     >
-      <h2 className="text-2xl font-bold mb-6">Upload Audio File</h2>
+      <h2 className="text-2xl font-bold mb-6">Submit a report</h2>
       <div>
         <Label htmlFor="file">Audio File</Label>
         <Input
