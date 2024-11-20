@@ -1,42 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export default function AudioUploadForm() {
-  const [file, setFile] = useState<File | null>(null);
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [tags, setTags] = useState("");
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<[number, number]>([31.86, -116.6]);
   const [isUploading, setIsUploading] = useState(false);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
 
-    // Validate inputs
-    if (!file || !latitude || !longitude || !tags) {
+    const target = e.target as HTMLFormElement;
+    const file = (target.elements.namedItem("file") as HTMLInputElement)
+      .files?.[0];
+
+    if (!file) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Please select an audio file to upload.",
         variant: "destructive",
       });
       setIsUploading(false);
       return;
     }
 
-    // Create FormData object
+    const latitude = (target.elements.namedItem("latitude") as HTMLInputElement)
+      .value;
+    const longitude = (
+      target.elements.namedItem("longitude") as HTMLInputElement
+    ).value;
+    const tags = (target.elements.namedItem("tags") as HTMLInputElement).value;
+
     const formData = new FormData();
     formData.append("audio", file);
     formData.append("latitude", latitude);
@@ -44,24 +47,19 @@ export default function AudioUploadForm() {
     formData.append("tags", tags);
 
     try {
-      // Simulating an API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/audio", {
+        method: "POST",
+        body: formData,
+      });
 
-      // If the upload is successful, show a success toast
       toast({
         title: "Success",
         description: "Audio file uploaded successfully!",
         action: <ToastAction altText="View uploads">View uploads</ToastAction>,
       });
 
-      // Reset form
-      setFile(null);
-      setLatitude("");
-      setLongitude("");
-      setTags("");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      // If there's an error, show an error toast
       toast({
         title: "Error",
         description: "Failed to upload audio file. Please try again.",
@@ -72,30 +70,66 @@ export default function AudioUploadForm() {
     }
   };
 
+  useEffect(() => {
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png",
+      iconUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
+    });
+
+    if (!mapRef.current) return;
+    const map = L.map(mapRef.current).setView(position, 12);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    L.marker(position).addTo(map);
+    map.on("click", (e) => {
+      setPosition([e.latlng.lat, e.latlng.lng]);
+    });
+
+    return () => {
+      map.remove();
+    };
+  });
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 max-w-md p-6 bg-white rounded-lg shadow-md min-w-80"
+      className="space-y-6 max-w-md p-6 bg-white rounded-lg shadow-md min-w-96"
     >
       <h2 className="text-2xl font-bold mb-6">Upload Audio File</h2>
       <div>
-        <Label htmlFor="audio-file">Audio File</Label>
+        <Label htmlFor="file">Audio File</Label>
         <Input
-          id="audio-file"
+          id="file"
           type="file"
           accept="audio/*"
-          onChange={handleFileChange}
+          required
           className="mt-1"
         />
       </div>
+      <div
+        ref={mapRef}
+        className="map-container mb-4"
+        style={{ height: "300px" }}
+      />
       <div>
         <Label htmlFor="latitude">Latitude</Label>
         <Input
           id="latitude"
           type="number"
           step="any"
-          value={latitude}
-          onChange={(e) => setLatitude(e.target.value)}
+          min={-90}
+          max={90}
+          value={position[0]}
+          onChange={(e) => setPosition([+e.target.value, position[1]])}
+          required
           placeholder="Enter latitude"
           className="mt-1"
         />
@@ -106,8 +140,11 @@ export default function AudioUploadForm() {
           id="longitude"
           type="number"
           step="any"
-          value={longitude}
-          onChange={(e) => setLongitude(e.target.value)}
+          min={-180}
+          max={180}
+          value={position[1]}
+          onChange={(e) => setPosition([position[0], +e.target.value])}
+          required
           placeholder="Enter longitude"
           className="mt-1"
         />
@@ -116,8 +153,6 @@ export default function AudioUploadForm() {
         <Label htmlFor="tags">Tags</Label>
         <Textarea
           id="tags"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
           placeholder="Enter tags (comma-separated)"
           className="mt-1"
         />
