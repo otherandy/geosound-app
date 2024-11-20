@@ -70,7 +70,9 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
           {filteredData.map((item) => (
             <TableRow key={item.id}>
               <TableCell>
-                <Link href={"data/" + item.id}>{item.filename}</Link>
+                <Link href={"data/" + item.id} className="hover:underline">
+                  {item.filename}
+                </Link>
               </TableCell>
               <TableCell>{item.latitude.toFixed(6)}</TableCell>
               <TableCell>{item.longitude.toFixed(6)}</TableCell>
