@@ -55,12 +55,14 @@ export default function AudioUploadForm() {
         throw new Error("Failed to upload audio file.");
       }
 
+      const data = await res.json();
+
       toast({
         title: "Success",
         description: "Audio file uploaded successfully!",
         action: (
           <ToastAction altText="View uploads" asChild>
-            <Link href="/data">View uploads</Link>
+            <Link href={"data/" + data.id}>View upload</Link>
           </ToastAction>
         ),
       });

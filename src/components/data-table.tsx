@@ -13,19 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { AudioData } from "@/lib/types";
+import Link from "next/link";
 
 export default function AudioDataTable({ data }: { data: AudioData[] }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredData = data.filter((item) =>
     Object.values(item).some((value) =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-    ),
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   const playAudio = async (id: string) => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`,
+      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
     );
     const audio = new Audio(res.url);
     audio.play();
@@ -54,7 +55,9 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
         <TableBody>
           {filteredData.map((item) => (
             <TableRow key={item.id}>
-              <TableCell>{item.filename}</TableCell>
+              <TableCell>
+                <Link href={"data/" + item.id}>{item.filename}</Link>
+              </TableCell>
               <TableCell>{item.latitude.toFixed(6)}</TableCell>
               <TableCell>{item.longitude.toFixed(6)}</TableCell>
               <TableCell>{item.loudness.toFixed(2)}</TableCell>
