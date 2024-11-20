@@ -8,7 +8,17 @@ import type { AudioData } from "@/lib/types";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-export default function AudioDataMap({ data }: { data: AudioData[] }) {
+export default function AudioDataMap({
+  data,
+  circle,
+}: {
+  data: AudioData[];
+  circle?: {
+    latitude: number;
+    longitude: number;
+    radius: number;
+  };
+}) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [activeAudio, setActiveAudio] = useState<AudioData>();
 
@@ -38,10 +48,18 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
       marker.on("popupclose", () => setActiveAudio(undefined));
     });
 
+    if (circle) {
+      L.circle([circle.latitude, circle.longitude], {
+        radius: circle.radius,
+      }).addTo(map);
+
+      map.setView([circle.latitude, circle.longitude], 15);
+    }
+
     return () => {
       map.remove();
     };
-  }, [data]);
+  }, [data, circle]);
 
   const playAudio = async (id: string) => {
     const res = await fetch(
