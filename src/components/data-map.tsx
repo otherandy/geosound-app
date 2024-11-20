@@ -28,6 +28,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      noWrap: true,
     }).addTo(map);
 
     data.forEach((audio) => {
@@ -44,7 +45,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
 
   const playAudio = async (id: string) => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`,
+      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
     );
     const audio = new Audio(res.url);
     audio.play();
