@@ -9,6 +9,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/hooks/use-toast";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Link from "next/link";
 
 export default function AudioUploadForm() {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -47,15 +48,23 @@ export default function AudioUploadForm() {
     formData.append("tags", tags);
 
     try {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + "/audio", {
+      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/audio", {
         method: "POST",
         body: formData,
       });
 
+      if (!res.ok) {
+        throw new Error("Failed to upload audio file.");
+      }
+
       toast({
         title: "Success",
         description: "Audio file uploaded successfully!",
-        action: <ToastAction altText="View uploads">View uploads</ToastAction>,
+        action: (
+          <ToastAction altText="View uploads" asChild>
+            <Link href="/data">View uploads</Link>
+          </ToastAction>
+        ),
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
