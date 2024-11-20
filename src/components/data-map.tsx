@@ -34,6 +34,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
       const marker = L.marker([audio.latitude, audio.longitude]).addTo(map);
       marker.bindPopup(`<b>${audio.filename}</b>`);
       marker.on("click", () => setActiveAudio(audio));
+      marker.on("popupclose", () => setActiveAudio(undefined));
     });
 
     return () => {
