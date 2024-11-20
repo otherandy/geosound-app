@@ -20,7 +20,9 @@ export default function AudioDataMap({
   };
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [activeAudio, setActiveAudio] = useState<AudioData>();
+  const [activePoint, setActivePoint] = useState<AudioData>();
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     L.Icon.Default.mergeOptions({
@@ -44,8 +46,8 @@ export default function AudioDataMap({
     data.forEach((audio) => {
       const marker = L.marker([audio.latitude, audio.longitude]).addTo(map);
       marker.bindPopup(`<b>${audio.filename}</b>`);
-      marker.on("click", () => setActiveAudio(audio));
-      marker.on("popupclose", () => setActiveAudio(undefined));
+      marker.on("click", () => setActivePoint(audio));
+      marker.on("popupclose", () => setActivePoint(undefined));
     });
 
     if (circle?.latitude && circle?.longitude && circle?.radius) {
@@ -62,11 +64,20 @@ export default function AudioDataMap({
   }, [data, circle]);
 
   const playAudio = async (id: string) => {
+    if (playing) {
+      audio?.pause();
+      setPlaying(false);
+      return;
+    }
+
     const res = await fetch(
       process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
     );
-    const audio = new Audio(res.url);
-    audio.play();
+    const a = new Audio(res.url);
+    a.play();
+    a.addEventListener("ended", () => setPlaying(false));
+    setPlaying(true);
+    setAudio(a);
   };
 
   return (
@@ -76,17 +87,17 @@ export default function AudioDataMap({
         className="map-container mb-4"
         style={{ height: "500px" }}
       />
-      {activeAudio && (
+      {activePoint && (
         <Card className="mx-4">
           <CardHeader>
-            <CardTitle>{activeAudio.filename}</CardTitle>
+            <CardTitle>{activePoint.filename}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Latitude: {activeAudio.latitude.toFixed(4)}</p>
-            <p>Longitude: {activeAudio.longitude.toFixed(4)}</p>
-            <p>Loudness: {activeAudio.loudness.toFixed(2)}</p>
+            <p>Latitude: {activePoint.latitude.toFixed(4)}</p>
+            <p>Longitude: {activePoint.longitude.toFixed(4)}</p>
+            <p>Loudness: {activePoint.loudness.toFixed(2)}</p>
             <div className="mt-2">
-              {activeAudio.tags.map((tag) => (
+              {activePoint.tags.map((tag) => (
                 <Badge key={tag} variant="secondary" className="mr-1">
                   {tag}
                 </Badge>
@@ -96,9 +107,16 @@ export default function AudioDataMap({
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => playAudio(activeAudio.id)}
+              onClick={() => {
+                if (playing) {
+                  audio?.pause();
+                  setPlaying(false);
+                } else {
+                  playAudio(activePoint.id);
+                }
+              }}
             >
-              Play Audio
+              {playing ? "Stop" : "Play"}
             </Button>
           </CardContent>
         </Card>

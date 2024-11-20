@@ -17,6 +17,9 @@ import Link from "next/link";
 
 export default function AudioDataTable({ data }: { data: AudioData[] }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [playingAudio, setPlayingAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
 
   const filteredData = data.filter((item) =>
     Object.values(item).some((value) =>
@@ -25,11 +28,22 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
   );
 
   const playAudio = async (id: string) => {
+    if (playingAudio) {
+      playingAudio.pause();
+      setPlayingAudio(null);
+      return;
+    }
+
     const res = await fetch(
       process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
     );
-    const audio = new Audio(res.url);
-    audio.play();
+
+    const a = new Audio(res.url);
+    a.play();
+    a.addEventListener("ended", () => {
+      setPlayingAudio(null);
+    });
+    setPlayingAudio(a);
   };
 
   return (
@@ -74,7 +88,9 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
                   size="sm"
                   onClick={() => playAudio(item.id)}
                 >
-                  Play
+                  {playingAudio && playingAudio.src.includes(item.id)
+                    ? "Stop"
+                    : "Play"}
                 </Button>
               </TableCell>
             </TableRow>
