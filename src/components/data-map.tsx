@@ -44,7 +44,7 @@ export default function AudioDataMap({ data }: { data: AudioData[] }) {
 
   const playAudio = async (id: string) => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
+      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`,
     );
     const audio = new Audio(res.url);
     audio.play();

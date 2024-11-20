@@ -19,13 +19,13 @@ export default function AudioDataTable({ data }: { data: AudioData[] }) {
 
   const filteredData = data.filter((item) =>
     Object.values(item).some((value) =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+    ),
   );
 
   const playAudio = async (id: string) => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`
+      process.env.NEXT_PUBLIC_API_URL + `/audio/${id}?download=true`,
     );
     const audio = new Audio(res.url);
     audio.play();
