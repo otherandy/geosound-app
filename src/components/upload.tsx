@@ -14,6 +14,7 @@ import Link from "next/link";
 export default function AudioUploadForm() {
   const mapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<[number, number]>([31.86, -116.6]);
+const [zoom, setZoom] = useState(12);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,7 +91,7 @@ export default function AudioUploadForm() {
     });
 
     if (!mapRef.current) return;
-    const map = L.map(mapRef.current).setView(position, 12);
+    const map = L.map(mapRef.current).setView(position, zoom);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -100,6 +101,7 @@ export default function AudioUploadForm() {
     L.marker(position).addTo(map);
     map.on("click", (e) => {
       setPosition([e.latlng.lat, e.latlng.lng]);
+setZoom(map.getZoom());
     });
 
     return () => {
